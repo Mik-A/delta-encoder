@@ -3,7 +3,7 @@ import axios from "axios"
 
 export const handler =  () => {
   const sheetId = process.env.NODE_ENV_SHEET_ID
-  const sheetKey = process.env.REACT_APP_SHEET_API_KEY
+  const sheetKey = process.env.NODE_ENV_API_KEY_SHEET
 
   const sheetApiGetRows =  `https://sheets.googleapis.com/v4/spreadsheets/${sheetId}/values:batchGet?ranges=Styles&majorDimension=ROWS&key=${sheetKey}`
 
