@@ -69,8 +69,8 @@ const App = () => {
     <div className="App">
       <h1>{currentTheme === 'default' ? "Light theme" : "Dark theme"}</h1>
       <button onClick={onToggleColors}>Toggle theme</button>
-      <button onClick={handleApiCallStore("update-variable-store")}>{msg.loading ? "Loading..." : "Call me"}</button>      
-      <button onClick={handleApiCall("modified-time")}>{msg.loading ? "Loading..." : "Call me"}</button>
+      <button onClick={handleApiCallStore("update-variable-store")}>{msg.loading ? "Loading..." : "Update colors"}</button>      
+      {/* <button onClick={handleApiCall("modified-time")}>{msg.loading ? "Loading..." : "Call me"}</button> */}
         <p>{msg.msg}</p>
     </div>
   );
