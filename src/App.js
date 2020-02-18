@@ -57,11 +57,16 @@ const App = () => {
       .then(response => response.json())
       .then(json => setMsg({ loading: false, msg: json.msg }))
   }
+
   const handleApiCallStore = api => e => {
     e.preventDefault()
     fetch("/.netlify/functions/" + api)
       .then(response => response.json())
       .then(json => setMainColors(json.var))
+  
+  const nextTheme = currentTheme === 'default' ? "dark" : 'default';
+  setTheme(nextTheme);
+  applyTheme(nextTheme, () => setTheme(nextTheme));
   }
   useEffect(() => {
   })
