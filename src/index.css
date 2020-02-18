@@ -1,3 +1,14 @@
+:root {
+  --color-surface: white;
+  --color-solid: black;
+  --color-primary: teal;
+}
+
+html {
+  background: var(--color-surface);
+  color: var(--color-solid);
+}
+
 body {
   margin: 0;
   padding: 0;
@@ -12,3 +23,9 @@ code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
     monospace;
 }
+
+.App {
+  font-family: sans-serif;
+  text-align: center;
+}
+
