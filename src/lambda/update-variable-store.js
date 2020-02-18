@@ -1,32 +1,74 @@
 import axios from "axios"
 
 
-export const handler =  () => {
- 
-  fetch(sheetApiGetRows)
-  .then((response) => {
-  return response.json();
-})
-.then((myJson) => {
-  const colorsFromSheet = Object.fromEntries(myJson.valueRanges[0].values);
-  
-}
-}   
-
-export const handler = () => {
+export const handler = async () => {
     const sheetId = process.env.NODE_ENV_SHEET_ID
-    const sheetKey = process.env.NODE_ENV_API_KEY_SHEET
-    const sheetApiGetRows =  `https://sheets.googleapis.com/v4/spreadsheets/${sheetId}/values:batchGet?ranges=Styles&majorDimension=ROWS&key=${sheetKey}`  
-    
-    fetch(sheetApiGetRows)
-    .then((response) => {
-    return response.json();
-  })
-  .then((myJson) => {
-    const colorsFromSheet = Object.fromEntries(myJson.valueRanges[0].values);
-    return {
+    const driveApiKey = process.env.NODE_ENV_API_KEY_DRIVE
+  // NODE_ENV_API_KEY_SHEET
+
+  // SOME STUPID CACHING ON GOOGLES SIDE. DOES NOT UPDATE ALL/REAL TIME, CHANGES
+  const driveApi = `https://www.googleapis.com/drive/v3/files/${sheetId}?key=${driveApiKey}&fields=modifiedTime`
+    try {
+      const response = await axios.get(`${driveApi}`)
+      const data = new Date(response.data.modifiedTime)
+      return {
         statusCode: 200,
-        body: JSON.stringify({ var: colorsFromSheet })
+        body: JSON.stringify({ msg: data })
       }
-  })
-}
+    } catch (err) {
+      console.log(err) // output to netlify function log
+      return {
+        statusCode: 500,
+        body: JSON.stringify({ msg: {} }) // Could be a custom message or object i.e. JSON.stringify(err)
+      }
+    }
+  }
+
+
+// import axios from "axios"
+
+// export async function handler(event, context) {
+//         // const sheetId = process.env.NODE_ENV_SHEET_ID
+//     // const sheetKey = process.env.NODE_ENV_API_KEY_SHEET
+//     const sheetKey = 'AIzaSyDEo-oYexMJyI4HVd54-Z2lftwNZ5_BoPE'
+//     const sheetId = "1ALBBjIigmzQVmGSzvFAYYyElPUshwT5Duhfvt0krgbw"
+//     const sheetApiGetRows =  `https://sheets.googleapis.com/v4/spreadsheets/${sheetId}/values:batchGet?ranges=Styles&majorDimension=ROWS&key=${sheetKey}`  
+
+//   try {
+//     const response = await axios.get(sheetApiGetRows)
+//     const data = response
+//     const colorsFromSheet = Object.fromEntries(data.valueRanges[0].values);
+
+//     return {
+//       statusCode: 200,
+//       body: JSON.stringify({ msg:colorsFromSheet })
+//     }
+//   } catch (err) {
+//     console.log(err) // output to netlify function log
+//     return {
+//       statusCode: 500,
+//       body: JSON.stringify({ msg: err.message }) // Could be a custom message or object i.e. JSON.stringify(err)
+//     }
+//   }
+// }
+
+// export const handler = () => {
+//     // const sheetId = process.env.NODE_ENV_SHEET_ID
+//     // const sheetKey = process.env.NODE_ENV_API_KEY_SHEET
+//     const sheetKey = 'AIzaSyDEo-oYexMJyI4HVd54-Z2lftwNZ5_BoPE'
+//     const sheetId = "1ALBBjIigmzQVmGSzvFAYYyElPUshwT5Duhfvt0krgbw"
+
+//     const sheetApiGetRows =  `https://sheets.googleapis.com/v4/spreadsheets/${sheetId}/values:batchGet?ranges=Styles&majorDimension=ROWS&key=${sheetKey}`  
+    
+//     fetch(sheetApiGetRows)
+//     .then((response) => {
+//     return response.json();
+//   })
+//   .then((myJson) => {
+//     const colorsFromSheet = Object.fromEntries(myJson.valueRanges[0].values);
+//     return {
+//         statusCode: 200,
+//         body: JSON.stringify({ var: colorsFromSheet })
+//       }
+//   })
+// }

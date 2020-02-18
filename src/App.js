@@ -62,20 +62,19 @@ const App = () => {
     e.preventDefault()
     fetch("/.netlify/functions/" + api)
       .then(response => response.json())
-      .then(json => setMainColors(json.var))
+      .then(json => console.log(json))
+      .then(json => setMainColors(json))
   
   const nextTheme = currentTheme === 'default' ? "dark" : 'default';
   setTheme(nextTheme);
   applyTheme(nextTheme, () => setTheme(nextTheme));
   }
-  useEffect(() => {
-  })
   return (
     <div className="App">
       <h1>{currentTheme === 'default' ? "Light theme" : "Dark theme"}</h1>
       <button onClick={onToggleColors}>Toggle theme</button>
       <button onClick={handleApiCallStore("update-variable-store")}>{msg.loading ? "Loading..." : "Update colors"}</button>      
-      {/* <button onClick={handleApiCall("modified-time")}>{msg.loading ? "Loading..." : "Call me"}</button> */}
+      <button onClick={handleApiCall("modified-time")}>{msg.loading ? "Loading..." : "Call me"}</button>
         <p>{msg.msg}</p>
     </div>
   );
