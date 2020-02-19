@@ -1,29 +1,37 @@
-import axios from "axios"
-
+import axios from 'axios'
 
 export const handler = async () => {
-    const sheetId = process.env.NODE_ENV_SHEET_ID
-    const driveApiKey = process.env.NODE_ENV_API_KEY_DRIVE
-  // NODE_ENV_API_KEY_SHEET
+  let sheetId = process.env.NODE_ENV_SHEET_ID
+  let driveApiKey = process.env.NODE_ENV_API_KEY_DRIVE
+  let sheetKey = process.env.NODE_ENV_API_KEY_SHEET
+  // NODE_ENV_API_KEY_SHEET=AIzaSyDEo-oYexMJyI4HVd54-Z2lftwNZ5_BoPE
+  // NODE_ENV_API_KEY_DRIVE=AIzaSyDPjhJ03yNynLS2rdEmYQzIyXTPNH5wO0I
+  // NODE_ENV_SHEET_ID=1ALBBjIigmzQVmGSzvFAYYyElPUshwT5Duhfvt0krgbw
+  sheetKey = 'AIzaSyDEo-oYexMJyI4HVd54-Z2lftwNZ5_BoPE'
+  sheetId = '1ALBBjIigmzQVmGSzvFAYYyElPUshwT5Duhfvt0krgbw'
+  driveApiKey = 'AIzaSyDPjhJ03yNynLS2rdEmYQzIyXTPNH5wO0I'
 
   // SOME STUPID CACHING ON GOOGLES SIDE. DOES NOT UPDATE ALL/REAL TIME, CHANGES
   const driveApi = `https://www.googleapis.com/drive/v3/files/${sheetId}?key=${driveApiKey}&fields=modifiedTime`
-    try {
-      const response = await axios.get(`${driveApi}`)
-      const data = new Date(response.data.modifiedTime)
-      return {
-        statusCode: 200,
-        body: JSON.stringify({ msg: data })
-      }
-    } catch (err) {
-      console.log(err) // output to netlify function log
-      return {
-        statusCode: 500,
-        body: JSON.stringify({ msg: {} }) // Could be a custom message or object i.e. JSON.stringify(err)
-      }
+  const sheetApiGetRows = `https://sheets.googleapis.com/v4/spreadsheets/${sheetId}/values:batchGet?ranges=Styles&majorDimension=ROWS&key=${sheetKey}`
+
+  try {
+    const response = await axios.get(`${sheetApiGetRows}`)
+    const data = response
+    return {
+      statusCode: 200,
+      body: JSON.stringify({
+        msg: Object.entries(data).length > 0 ? data : 'empty response'
+      })
+    }
+  } catch (err) {
+    console.log(err) // output to netlify function log
+    return {
+      statusCode: 500,
+      body: JSON.stringify({ msg: err }) // Could be a custom message or object i.e. JSON.stringify(err)
     }
   }
-
+}
 
 // import axios from "axios"
 
@@ -32,7 +40,7 @@ export const handler = async () => {
 //     // const sheetKey = process.env.NODE_ENV_API_KEY_SHEET
 //     const sheetKey = 'AIzaSyDEo-oYexMJyI4HVd54-Z2lftwNZ5_BoPE'
 //     const sheetId = "1ALBBjIigmzQVmGSzvFAYYyElPUshwT5Duhfvt0krgbw"
-//     const sheetApiGetRows =  `https://sheets.googleapis.com/v4/spreadsheets/${sheetId}/values:batchGet?ranges=Styles&majorDimension=ROWS&key=${sheetKey}`  
+//     const sheetApiGetRows =  `https://sheets.googleapis.com/v4/spreadsheets/${sheetId}/values:batchGet?ranges=Styles&majorDimension=ROWS&key=${sheetKey}`
 
 //   try {
 //     const response = await axios.get(sheetApiGetRows)
@@ -58,8 +66,8 @@ export const handler = async () => {
 //     const sheetKey = 'AIzaSyDEo-oYexMJyI4HVd54-Z2lftwNZ5_BoPE'
 //     const sheetId = "1ALBBjIigmzQVmGSzvFAYYyElPUshwT5Duhfvt0krgbw"
 
-//     const sheetApiGetRows =  `https://sheets.googleapis.com/v4/spreadsheets/${sheetId}/values:batchGet?ranges=Styles&majorDimension=ROWS&key=${sheetKey}`  
-    
+//     const sheetApiGetRows =  `https://sheets.googleapis.com/v4/spreadsheets/${sheetId}/values:batchGet?ranges=Styles&majorDimension=ROWS&key=${sheetKey}`
+
 //     fetch(sheetApiGetRows)
 //     .then((response) => {
 //     return response.json();
