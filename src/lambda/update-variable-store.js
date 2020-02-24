@@ -1,82 +1,37 @@
-import axios from 'axios'
+import { GoogleSpreadsheet } from 'google-spreadsheet'
+// const { isColor } = require('is-color')
 
-export const handler = async () => {
-  let sheetId = process.env.NODE_ENV_SHEET_ID
-  let driveApiKey = process.env.NODE_ENV_API_KEY_DRIVE
-  let sheetKey = process.env.NODE_ENV_API_KEY_SHEET
-  // NODE_ENV_API_KEY_SHEET=AIzaSyDEo-oYexMJyI4HVd54-Z2lftwNZ5_BoPE
-  // NODE_ENV_API_KEY_DRIVE=AIzaSyDPjhJ03yNynLS2rdEmYQzIyXTPNH5wO0I
-  // NODE_ENV_SHEET_ID=1ALBBjIigmzQVmGSzvFAYYyElPUshwT5Duhfvt0krgbw
-  sheetKey = 'AIzaSyDEo-oYexMJyI4HVd54-Z2lftwNZ5_BoPE'
-  sheetId = '1ALBBjIigmzQVmGSzvFAYYyElPUshwT5Duhfvt0krgbw'
-  driveApiKey = 'AIzaSyDPjhJ03yNynLS2rdEmYQzIyXTPNH5wO0I'
+export async function handler(event, context, callback) {
+  // // Identifying which document we'll be accessing/reading from
+  const SPREADSHEET_ID = process.env.NODE_ENV_SHEET_ID
 
-  // SOME STUPID CACHING ON GOOGLES SIDE. DOES NOT UPDATE ALL/REAL TIME, CHANGES
-  const driveApi = `https://www.googleapis.com/drive/v3/files/${sheetId}?key=${driveApiKey}&fields=modifiedTime`
-  const sheetApiGetRows = `https://sheets.googleapis.com/v4/spreadsheets/${sheetId}/values:batchGet?ranges=Styles&majorDimension=ROWS&key=${sheetKey}`
-
-  try {
-    const response = await axios.get(`${sheetApiGetRows}`)
-    const data = response
-    return {
-      statusCode: 200,
-      body: JSON.stringify({
-        msg: Object.entries(data).length > 0 ? data : 'empty response'
-      })
-    }
-  } catch (err) {
-    console.log(err) // output to netlify function log
-    return {
-      statusCode: 500,
-      body: JSON.stringify({ msg: err }) // Could be a custom message or object i.e. JSON.stringify(err)
-    }
+  // spreadsheet key is the long id in the sheets URL
+  const doc = new GoogleSpreadsheet(SPREADSHEET_ID)
+  // use service account creds
+  await doc.useServiceAccountAuth({
+    client_email: process.env.NODE_ENV_GOOGLE_SERVICE_ACCOUNT_EMAIL,
+    private_key: process.env.NODE_ENV_GOOGLE_PRIVATE_KEY
+  })
+  // OR load directly from json file if not in secure environment
+  // await doc.useServiceAccountAuth(creds)
+  // OR use API key -- only for read-only access to public sheets
+  // doc.useApiKey('YOUR-API-KEY');
+  await doc.loadInfo() // loads document properties and worksheets
+  const sheet = doc.sheetsByIndex[0]
+  await sheet.loadCells('A1:Z13') // loads a range of cells
+  // console.log(sheet.cellStats)
+  // can pass in { limit, offset }
+  // read/write row values
+  const rows = await sheet.getRows()
+  const obj = rows.map((row) => {
+    // const value = isColor(row.value) ? row.value : 'currenColor'
+    return [row.name, row.value]
+  })
+  const cssVariables = Object.fromEntries(obj)
+  // const title = doc.title
+  const res = {
+    statusCode: 200,
+    body: JSON.stringify({ msg: 'upd', cssVariables })
   }
+  return res
 }
-
-// import axios from "axios"
-
-// export async function handler(event, context) {
-//         // const sheetId = process.env.NODE_ENV_SHEET_ID
-//     // const sheetKey = process.env.NODE_ENV_API_KEY_SHEET
-//     const sheetKey = 'AIzaSyDEo-oYexMJyI4HVd54-Z2lftwNZ5_BoPE'
-//     const sheetId = "1ALBBjIigmzQVmGSzvFAYYyElPUshwT5Duhfvt0krgbw"
-//     const sheetApiGetRows =  `https://sheets.googleapis.com/v4/spreadsheets/${sheetId}/values:batchGet?ranges=Styles&majorDimension=ROWS&key=${sheetKey}`
-
-//   try {
-//     const response = await axios.get(sheetApiGetRows)
-//     const data = response
-//     const colorsFromSheet = Object.fromEntries(data.valueRanges[0].values);
-
-//     return {
-//       statusCode: 200,
-//       body: JSON.stringify({ msg:colorsFromSheet })
-//     }
-//   } catch (err) {
-//     console.log(err) // output to netlify function log
-//     return {
-//       statusCode: 500,
-//       body: JSON.stringify({ msg: err.message }) // Could be a custom message or object i.e. JSON.stringify(err)
-//     }
-//   }
-// }
-
-// export const handler = () => {
-//     // const sheetId = process.env.NODE_ENV_SHEET_ID
-//     // const sheetKey = process.env.NODE_ENV_API_KEY_SHEET
-//     const sheetKey = 'AIzaSyDEo-oYexMJyI4HVd54-Z2lftwNZ5_BoPE'
-//     const sheetId = "1ALBBjIigmzQVmGSzvFAYYyElPUshwT5Duhfvt0krgbw"
-
-//     const sheetApiGetRows =  `https://sheets.googleapis.com/v4/spreadsheets/${sheetId}/values:batchGet?ranges=Styles&majorDimension=ROWS&key=${sheetKey}`
-
-//     fetch(sheetApiGetRows)
-//     .then((response) => {
-//     return response.json();
-//   })
-//   .then((myJson) => {
-//     const colorsFromSheet = Object.fromEntries(myJson.valueRanges[0].values);
-//     return {
-//         statusCode: 200,
-//         body: JSON.stringify({ var: colorsFromSheet })
-//       }
-//   })
-// }
