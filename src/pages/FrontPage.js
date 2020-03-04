@@ -1,9 +1,7 @@
-import React, { useRef, useEffect, useState } from 'react'
+import React, { useRef, useEffect, useState, Fragment } from 'react'
 // import isColor from 'is-color'
-import '../styles/datadriven.css'
+import '../styles/aitobrand.css'
 import '../styles/common.css'
-
-import { isEqual } from '../helperFunctions/'
 
 const FrontPage = () => {
   const defaultTheme = {
@@ -13,12 +11,19 @@ const FrontPage = () => {
   }
 
   const [currentStyle, setStyle] = useState(defaultTheme)
-  const [msg, setMsg] = useState({ loading: false, msg: '' })
+  const [mode, setMode] = useState('Encode')
+  const [query, setQuery] = useState('')
+
+  const [msg, setMsg] = useState({
+    loading: false,
+    msg: 'Preview\n...'
+  })
 
   //     const prevRef = useRef()
 
-  //   useEffect(() => {
-  //   }, [])
+  useEffect(() => {
+    console.log('query', query)
+  })
 
   const applyTheme = (styles) => {
     console.log('styles', styles)
@@ -39,24 +44,73 @@ const FrontPage = () => {
 
   const handleApiCallStore = (api) => (e) => {
     e.preventDefault()
-    fetch('/.netlify/functions/' + api)
+    const url = query
+    fetch('/.netlify/functions/' + api, {
+      method: 'post',
+      headers: {
+        Accept: 'application/json',
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        fetchMessage: 'Fetch request done',
+        url
+      })
+    })
       .then((response) => response.json())
       .then((json) => {
-        setStyle(json.cssVariables)
-        applyTheme(json.cssVariables)
-        setMsg({ loading: false, msg: json.msg })
+        console.log('json front end', json)
+        const msg = json.msg.slice(0, 280) + '...'
+        setMsg({ loading: false, msg })
       })
   }
 
   return (
     <article className='grid-center'>
-      <h1>Interesting header</h1>
-      <p>
-        <button onClick={handleApiCallStore('update-variable-store')}>
-          {msg.loading ? 'Loading...' : 'Upload style'}
-        </button>
-      </p>
-      <p>{msg.msg}</p>
+      <h1>Aito Delta Encoder</h1>
+      <p />
+
+      <div className='switch-field'>
+        <div className='switch-field'>
+          <input
+            type='radio'
+            id='radio-one'
+            name='switch-one'
+            defaultChecked={mode === 'Encode'}
+            value='Encode'
+            onClick={() => setMode('Encode')}
+          />
+          <label htmlFor='radio-one'>Encode</label>
+          <input
+            type='radio'
+            id='radio-two'
+            name='switch-one'
+            defaultChecked={mode === 'Decode'}
+            value='Decode'
+            onClick={() => setMode('Decode')}
+          />
+          <label htmlFor='radio-two'>Decode</label>
+        </div>
+      </div>
+      {mode === 'Encode' && (
+        <article className='min-width-300'>
+          <form onSubmit={handleApiCallStore('test')}>
+            <input
+              type='url'
+              name='query'
+              pattern='https?://.+'
+              required
+              onChange={(e) => setQuery(e.target.value)}
+            />
+            <input type='submit' value='Fetch text from url' />
+          </form>
+          {msg.loading ? 'Loading...' : ''}
+          <p></p>
+          <div style={{ width: 300 }}>{msg.msg}</div>
+        </article>
+      )}
+      {mode === 'Decode' && (
+        <article className='min-width-300'>Decode </article>
+      )}
     </article>
   )
 }

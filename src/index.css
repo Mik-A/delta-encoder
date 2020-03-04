@@ -1,10 +1,9 @@
 :root {
-  --color-surface: white;
+  --color-surface: #205341;
   --color-solid: black;
+  --color-heading: white;
+  --color-parapgraph: rgb(100, 185, 154);
   --color-primary: teal;
-}
-
-html {
 }
 
 body {

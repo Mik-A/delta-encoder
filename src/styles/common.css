@@ -1,3 +1,6 @@
+article {
+  width: 100%;
+}
 .flex-center {
   display: flex;
   justify-content: center;
@@ -7,4 +10,7 @@
   display: grid;
   justify-content: center;
   align-content: center;
+}
+.min-width-300 {
+  min-width: 300px;
 }
