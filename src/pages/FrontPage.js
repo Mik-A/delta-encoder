@@ -1,5 +1,6 @@
 import React, { useRef, useEffect, useState, Fragment } from 'react'
-// import isColor from 'is-color'
+import download from 'in-browser-download'
+
 import '../styles/aitobrand.css'
 import '../styles/common.css'
 
@@ -52,15 +53,15 @@ const FrontPage = () => {
         'Content-Type': 'application/json'
       },
       body: JSON.stringify({
-        fetchMessage: 'Fetch request done',
+        fetchMessage: 'Fetch request from front',
         url
       })
     })
       .then((response) => response.json())
       .then((json) => {
         console.log('json front end', json)
-        const msg = json.msg.slice(0, 280) + '...'
-        setMsg({ loading: false, msg })
+        setMsg({ loading: false, msg: json.msg })
+        download(json.encoded, 'encoded.txt')
       })
   }
 
@@ -93,7 +94,7 @@ const FrontPage = () => {
       </div>
       {mode === 'Encode' && (
         <article className='min-width-300'>
-          <form onSubmit={handleApiCallStore('test')}>
+          <form onSubmit={handleApiCallStore('encode')}>
             <input
               type='url'
               name='query'
