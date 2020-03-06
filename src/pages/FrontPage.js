@@ -1,5 +1,6 @@
 import React, { useRef, useEffect, useState, Fragment } from 'react'
 import download from 'in-browser-download'
+import DragDropFile from '../components/DragDropFile'
 
 import '../styles/aitobrand.css'
 import '../styles/common.css'
@@ -11,39 +12,20 @@ const FrontPage = () => {
     '--color-primary': 'teal'
   }
 
-  const [currentStyle, setStyle] = useState(defaultTheme)
   const [mode, setMode] = useState('Encode')
   const [query, setQuery] = useState('')
+  const [uploadedEncodedText, setEncodedText] = useState('')
 
   const [msg, setMsg] = useState({
     loading: false,
     msg: 'Preview\n...'
   })
 
-  //     const prevRef = useRef()
+  // useEffect(() => {
+  //   console.log('query', query)
+  // })
 
-  useEffect(() => {
-    console.log('query', query)
-  })
-
-  const applyTheme = (styles) => {
-    console.log('styles', styles)
-    Object.keys(styles).map((key) => {
-      const value = styles[key]
-      document.documentElement.style.setProperty(key, value)
-      return null
-    })
-  }
-
-  // This is for another node api call, only in the sketches right now
-  // const handleApiCall = (api) => (e) => {
-  //   e.preventDefault()
-  //   fetch('/.netlify/functions/' + api)
-  //     .then((response) => response.json())
-  //     .then((json) => setMsg({ loading: false, msg: json.msg }))
-  // }
-
-  const handleApiCallStore = (api) => (e) => {
+  const handleApiCall = (api) => (e) => {
     e.preventDefault()
     const url = query
     fetch('/.netlify/functions/' + api, {
@@ -63,6 +45,31 @@ const FrontPage = () => {
         setMsg({ loading: false, msg: json.msg })
         download(json.encoded, 'encoded.txt')
       })
+  }
+  const handleDecode = (api) => (e) => {
+    e.preventDefault()
+    // const text = uploadedEncodedText
+    fetch('/.netlify/functions/' + api, {
+      method: 'post',
+      headers: {
+        Accept: 'application/json',
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        fetchMessage: 'Fetch request from front',
+        uploadedEncodedText
+      })
+    })
+      .then((response) => response.json())
+      .then((json) => {
+        console.log('json front end', json)
+        setMsg({ loading: false, msg: json.msg })
+        download(json.denoded, 'decoded.txt')
+      })
+  }
+  const handleFile = (text) => {
+    setEncodedText(text)
+    handleDecode('decode')
   }
 
   return (
@@ -94,7 +101,7 @@ const FrontPage = () => {
       </div>
       {mode === 'Encode' && (
         <article className='min-width-300'>
-          <form onSubmit={handleApiCallStore('encode')}>
+          <form onSubmit={handleApiCall('encode')}>
             <input
               type='url'
               name='query'
@@ -110,7 +117,10 @@ const FrontPage = () => {
         </article>
       )}
       {mode === 'Decode' && (
-        <article className='min-width-300'>Decode </article>
+        <article className='min-width-300'>
+          <h2>Decode</h2>
+          <DragDropFile fileUploadHandler={handleFile} />
+        </article>
       )}
     </article>
   )

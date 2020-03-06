@@ -61,7 +61,7 @@ export async function handler(event, context) {
     // result is the compressed/encoded text as an string with line breaks
     const encoded = result
 
-    fs.writeFile(outputDefault, result, function(err) {
+    fs.writeFile('/lib/encoded/' + outputDefault, result, function(err) {
       if (err) throw err
       console.log(
         `${OKBLUE}Encoded file is saved as ${outputDefault}\n${Reset}`
