@@ -1,3 +1,10 @@
+# Aito.ai Delta encoder/decoder UI
+
+download the repo and run
+`npm i` then `npm start`
+
+just try it. If you run in to problems please try the CLI app with description below. You are also very wellcome to contact me!
+
 # Aito.ai Delta encoder/decoder CLI
 
 This description is for using the node app in the command line (Console/Terminal)
@@ -18,9 +25,9 @@ https://github.com/Mik-A/aito-delta
 
 run `npm install` in the directory of the app
 
-run `npx serve`
+to start the a server run `npx serve`. The server should start at port 5000
 
-To start the a server. The server should start at port 5000
+-- Navigate to /src/lambda/ to run node functions --
 
 #### There are two commands with obligatory and optional flags
 
@@ -45,7 +52,7 @@ node compress file https://raw.githubusercontent.com/dwyl/english-words/master/w
 ### Decoding / Decompressing
 
 ```console
-node decode file myEncodedFile.txt output myReadableFile.txt local y
+node decompress file myEncodedFile.txt output myReadableFile.txt local y
 ```
 
 ## Author
@@ -55,8 +62,6 @@ node decode file myEncodedFile.txt output myReadableFile.txt local y
 - **Mika Välimäki** - [LinkedIn](https://www.linkedin.com/in/mika-v%C3%A4lim%C3%A4ki/)
 
 # INFO ABOUT THE APP DEV STATE
-
-For production there shoud be better naming convention. No mixing of compressing and encoding. Use only on concept!
 
 Flags could use common naming conventions with shorthand and long version.
 

@@ -2,8 +2,16 @@
   --color-surface: #205341;
   --color-solid: black;
   --color-heading: white;
-  --color-parapgraph: rgb(100, 185, 154);
+  --color-paragraph: rgb(100, 185, 154);
   --color-primary: teal;
+  --color-silvertree-dark: #205341;
+  --color-silvertree-medium: #64b99a;
+  --color-silvertree-light: #baf5e0;
+  --color-carnation-pink: #ffa9d3;
+  --color-jade-dark: #004121;
+  --color-jade-medium: #00b06a;
+  --color-jade-light: #b0f1b5;
+  --color-oracle-light: #a1c9b7;
 }
 
 body {

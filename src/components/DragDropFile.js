@@ -5,7 +5,7 @@ import React, { useState } from 'react'
     handleFile(file:File):void;
 */
 const DragDropFile = (props) => {
-  // const [file, getFile] = useState(null)
+  console.log(props)
   const suppress = (evt) => {
     evt.stopPropagation()
     evt.preventDefault()
@@ -18,7 +18,7 @@ const DragDropFile = (props) => {
   }
   const onChangeHandler = async (event) => {
     var file = event.target.files[0]
-    console.log(file)
+    // console.log(file)
     let text = await file.text()
     // getFile(text) // not really needed to use state
     props.fileUploadHandler(text)
@@ -31,14 +31,17 @@ const DragDropFile = (props) => {
       onDragOver={suppress}
     >
       <form method='post' action='#' id='#'>
-        <div className=''>
-          <label>Upload Your File </label>
-          <input
-            type='file'
-            name='file'
-            className='form-control'
-            onChange={onChangeHandler}
-          />
+        <div className='grid-2-col'>
+          {props.fileName}
+          <label className='file-handler'>
+            Upload Your File
+            <input
+              type='file'
+              name='file'
+              onChange={onChangeHandler}
+              style={{ display: 'none' }}
+            />
+          </label>
         </div>
       </form>
     </div>

@@ -17,22 +17,22 @@ export async function handler(event, context) {
     const fetchMessage =
       params.fetchMessage || 'Test, this text should not be in params'
     const url = params.url
-    console.log('params', params)
 
     const response = await axios.get(url, {
       // fetching the url
       headers: { Accept: 'application/json' }
     })
     const data = response.data
-    const previewText = 'Excerpt from original' + data.slice(0, 280) + '...'
+    const previewText = 'Excerpt from original: ' + data.slice(0, 280) + '...'
     const text = data
 
     // compressing the text and saving it in file
     const outputDefault =
-      'compressedFile.txt_' +
+      'compressedFile_' +
       Math.random()
         .toString(36)
-        .substr(2, 9)
+        .substr(2, 9) +
+      '.txt'
 
     function findIndex(a, b) {
       // helper function to find first differing character (index of the char)
@@ -61,12 +61,12 @@ export async function handler(event, context) {
     // result is the compressed/encoded text as an string with line breaks
     const encoded = result
 
-    fs.writeFile('/lib/encoded/' + outputDefault, result, function(err) {
-      if (err) throw err
-      console.log(
-        `${OKBLUE}Encoded file is saved as ${outputDefault}\n${Reset}`
-      )
-    })
+    // fs.writeFile('lib/encoded/' + outputDefault, encoded, function(err) {
+    //   if (err) throw err
+    //   console.log(
+    //     `${OKBLUE}Encoded file is saved as ${outputDefault}\n${Reset}`
+    //   )
+    // })
 
     return {
       statusCode: 200,

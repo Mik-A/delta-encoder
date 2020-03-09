@@ -6,27 +6,17 @@ import '../styles/aitobrand.css'
 import '../styles/common.css'
 
 const FrontPage = () => {
-  const defaultTheme = {
-    '--color-solid': 'black',
-    '--color-surface': 'white',
-    '--color-primary': 'teal'
-  }
-
   const [mode, setMode] = useState('Encode')
   const [query, setQuery] = useState('')
-  const [uploadedEncodedText, setEncodedText] = useState('')
-
   const [msg, setMsg] = useState({
     loading: false,
-    msg: 'Preview\n...'
+    msg: '',
+    fileName: 'no file uploaded'
   })
-
-  // useEffect(() => {
-  //   console.log('query', query)
-  // })
 
   const handleApiCall = (api) => (e) => {
     e.preventDefault()
+    setMsg({ loading: true })
     const url = query
     fetch('/.netlify/functions/' + api, {
       method: 'post',
@@ -41,13 +31,12 @@ const FrontPage = () => {
     })
       .then((response) => response.json())
       .then((json) => {
-        console.log('json front end', json)
         setMsg({ loading: false, msg: json.msg })
         download(json.encoded, 'encoded.txt')
       })
   }
   const handleDecode = (api) => (e) => {
-    e.preventDefault()
+    setMsg({ loading: true })
     // const text = uploadedEncodedText
     fetch('/.netlify/functions/' + api, {
       method: 'post',
@@ -57,28 +46,23 @@ const FrontPage = () => {
       },
       body: JSON.stringify({
         fetchMessage: 'Fetch request from front',
-        uploadedEncodedText
+        text: e
       })
     })
       .then((response) => response.json())
       .then((json) => {
-        console.log('json front end', json)
-        setMsg({ loading: false, msg: json.msg })
-        download(json.denoded, 'decoded.txt')
+        setMsg({ loading: false, msg: json.msg, fileName: json.name })
+        download(json.decodedText, 'decoded.txt')
       })
-  }
-  const handleFile = (text) => {
-    setEncodedText(text)
-    handleDecode('decode')
   }
 
   return (
-    <article className='grid-center'>
-      <h1>Aito Delta Encoder</h1>
+    <article className='grid-center main'>
+      <h1>{`Aito Delta ${mode}r`}</h1>
       <p />
 
-      <div className='switch-field'>
-        <div className='switch-field'>
+      <div className='switch-field grid-2-col'>
+        <div>
           <input
             type='radio'
             id='radio-one'
@@ -88,6 +72,8 @@ const FrontPage = () => {
             onClick={() => setMode('Encode')}
           />
           <label htmlFor='radio-one'>Encode</label>
+        </div>
+        <div>
           <input
             type='radio'
             id='radio-two'
@@ -100,26 +86,33 @@ const FrontPage = () => {
         </div>
       </div>
       {mode === 'Encode' && (
-        <article className='min-width-300'>
-          <form onSubmit={handleApiCall('encode')}>
-            <input
-              type='url'
-              name='query'
-              pattern='https?://.+'
-              required
-              onChange={(e) => setQuery(e.target.value)}
-            />
-            <input type='submit' value='Fetch text from url' />
+        <article>
+          <form onSubmit={handleApiCall('encode')} className='grid-2-col'>
+            <div>
+              <input
+                type='url'
+                name='query'
+                pattern='https?://.+'
+                required
+                onChange={(e) => setQuery(e.target.value)}
+              />
+            </div>
+            <div>
+              <input type='submit' value='Fetch text from url' />
+            </div>
           </form>
           {msg.loading ? 'Loading...' : ''}
           <p></p>
-          <div style={{ width: 300 }}>{msg.msg}</div>
+          {/* <section className='preview'>{msg.msg}</section> */}
         </article>
       )}
       {mode === 'Decode' && (
         <article className='min-width-300'>
-          <h2>Decode</h2>
-          <DragDropFile fileUploadHandler={handleFile} />
+          <DragDropFile
+            fileUploadHandler={handleDecode('decode')}
+            fileName={msg.fileName}
+          />
+          {/* <section className='preview'>{msg.msg}</section> */}
         </article>
       )}
     </article>
