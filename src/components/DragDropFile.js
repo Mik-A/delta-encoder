@@ -5,7 +5,6 @@ import React, { useState } from 'react'
     handleFile(file:File):void;
 */
 const DragDropFile = (props) => {
-  console.log(props)
   const suppress = (evt) => {
     evt.stopPropagation()
     evt.preventDefault()
@@ -18,10 +17,9 @@ const DragDropFile = (props) => {
   }
   const onChangeHandler = async (event) => {
     var file = event.target.files[0]
-    // console.log(file)
     let text = await file.text()
-    // getFile(text) // not really needed to use state
     props.fileUploadHandler(text)
+    props.updateFileName(file)
   }
   return (
     <div

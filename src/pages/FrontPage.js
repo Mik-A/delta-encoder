@@ -51,11 +51,13 @@ const FrontPage = () => {
     })
       .then((response) => response.json())
       .then((json) => {
-        setMsg({ loading: false, msg: json.msg, fileName: json.name })
+        setMsg({ loading: false, msg: json.msg })
         download(json.decodedText, 'decoded.txt')
       })
   }
-
+  const updateFileName = (e) => {
+    setMsg({ fileName: e.name })
+  }
   return (
     <article className='grid-center main'>
       <h1>{`Aito Delta ${mode}r`}</h1>
@@ -111,6 +113,7 @@ const FrontPage = () => {
           <DragDropFile
             fileUploadHandler={handleDecode('decode')}
             fileName={msg.fileName}
+            updateFileName={updateFileName}
           />
           {/* <section className='preview'>{msg.msg}</section> */}
         </article>
