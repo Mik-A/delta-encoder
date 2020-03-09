@@ -27,7 +27,7 @@ run `npm install` in the directory of the app
 
 to start the a server run `npx serve`. The server should start at port 5000
 
--- Navigate to /src/lambda/ to run node functions --
+-- Navigate to /cli/ to run node functions --
 
 #### There are two commands with obligatory and optional flags
 
