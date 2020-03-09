@@ -24,7 +24,7 @@ export async function handler(event, context) {
     }
   }
   const joinText = result.join('\n')
-  const decodedText = String(joinText)
+  const decodedText = joinText
   const previewText = 'Excerpt from decoded text: ' + text.slice(0, 280) + '...'
 
   return {

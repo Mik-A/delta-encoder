@@ -52,7 +52,7 @@ const FrontPage = () => {
       .then((response) => response.json())
       .then((json) => {
         setMsg({ loading: false, msg: json.msg })
-        download(json.decodedText, 'decoded.txt')
+        download(String(json.decodedText), 'decoded.txt')
       })
   }
   const updateFileName = (e) => {
