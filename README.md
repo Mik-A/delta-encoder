@@ -1,9 +1,12 @@
 # Aito.ai Delta encoder/decoder UI
 
 download the repo and run
-`npm i` then `npm start`
+`npm i` then `ntl dev`
 
-just try it. If you run in to problems please try the CLI app with description below. You are also very wellcome to contact me!
+Just try it. If you run in to problems please try the CLI app with description below. You are also very wellcome to contact me!
+
+There is also a live version at:
+https://mik-a-delta-encoder.netlify.com/
 
 # Aito.ai Delta encoder/decoder CLI
 
@@ -19,7 +22,7 @@ You need to know how to use a command line interface
 
 Clone or download the app from
 
-https://github.com/Mik-A/aito-delta
+https://github.com/Mik-A/delta-encoder
 
 ### Installing
 
